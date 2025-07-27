@@ -402,6 +402,7 @@
                             use:dndzone={{
                                 items: resource.attributes,
                                 flipDurationMs: 300,
+                                type: "attributes",
                             }}
                             on:consider={(e) =>
                                 handleAttributeDndConsider(
@@ -484,6 +485,7 @@
                             use:dndzone={{
                                 items: resource.relationships,
                                 flipDurationMs: 300,
+                                type: "relationships",
                             }}
                             on:consider={(e) =>
                                 handleRelationshipDndConsider(
