@@ -82,7 +82,7 @@
                 extensions: [],
                 customExtension: "",
                 base: "",
-                timestamps: false,
+                timestamps: true,
                 ignoreIfExists: false,
                 conflictHandling: "ignore",
             },
@@ -142,6 +142,14 @@
 
     function handleAttributeDndFinalize(resourceIndex, e) {
         resources[resourceIndex].attributes = e.detail.items;
+    }
+
+    function handleRelationshipDndConsider(resourceIndex, e) {
+        resources[resourceIndex].relationships = e.detail.items;
+    }
+
+    function handleRelationshipDndFinalize(resourceIndex, e) {
+        resources[resourceIndex].relationships = e.detail.items;
     }
 
     function generateCommand(resource) {
@@ -471,11 +479,31 @@
                                 + Add Relationship
                             </button>
                         </div>
-                        <div class="space-y-2">
-                            {#each resource.relationships as rel, relIndex}
+                        <div
+                            class="space-y-2"
+                            use:dndzone={{
+                                items: resource.relationships,
+                                flipDurationMs: 300,
+                            }}
+                            on:consider={(e) =>
+                                handleRelationshipDndConsider(
+                                    activeResourceIndex,
+                                    e,
+                                )}
+                            on:finalize={(e) =>
+                                handleRelationshipDndFinalize(
+                                    activeResourceIndex,
+                                    e,
+                                )}
+                        >
+                            {#each resource.relationships as rel, relIndex (rel.id)}
                                 <div
+                                    animate:flip={{ duration: 300 }}
                                     class="flex items-center space-x-2 p-3 bg-gray-50 rounded-md"
                                 >
+                                    <span class="cursor-move text-gray-400"
+                                        >⋮⋮</span
+                                    >
                                     <select
                                         bind:value={rel.type}
                                         class="px-2 py-1 border border-gray-300 rounded"
