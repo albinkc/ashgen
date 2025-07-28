@@ -67,6 +67,22 @@
         );
     }
 
+    /** helpers */
+    const blankAttribute = () => ({
+        id: Date.now(),
+        name: "",
+        type: "string",
+        modifiers: [],
+    });
+
+    const blankRelationship = () => ({
+        id: Date.now(),
+        type: "belongs_to",
+        name: "",
+        destination: "",
+        modifiers: [],
+    });
+
     function addNewResource() {
         resources = [
             ...resources,
@@ -74,8 +90,8 @@
                 id: Date.now(),
                 name: "",
                 domain: "",
-                attributes: [],
-                relationships: [],
+                attributes: [blankAttribute()], // ← one blank row
+                relationships: [blankRelationship()], // ← one blank row
                 defaultActions: [],
                 idType: "uuid-v7",
                 idFieldName: "id",
@@ -96,6 +112,26 @@
             if (activeResourceIndex >= resources.length) {
                 activeResourceIndex = resources.length - 1;
             }
+        }
+    }
+
+    function maybeAppendBlankAttribute(resourceIndex, attrIndex) {
+        const list = resources[resourceIndex].attributes;
+        if (
+            attrIndex === list.length - 1 &&
+            list[attrIndex].name.trim() !== ""
+        ) {
+            resources[resourceIndex].attributes = [...list, blankAttribute()];
+        }
+    }
+
+    function maybeAppendBlankRelationship(resourceIndex, relIndex) {
+        const list = resources[resourceIndex].relationships;
+        if (relIndex === list.length - 1 && list[relIndex].name.trim() !== "") {
+            resources[resourceIndex].relationships = [
+                ...list,
+                blankRelationship(),
+            ];
         }
     }
 
@@ -437,6 +473,11 @@
                                         type="text"
                                         bind:value={attr.name}
                                         placeholder="Name"
+                                        on:input={() =>
+                                            maybeAppendBlankAttribute(
+                                                activeResourceIndex,
+                                                attrIndex,
+                                            )}
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <select
@@ -528,6 +569,11 @@
                                         type="text"
                                         bind:value={rel.name}
                                         placeholder="Name"
+                                        on:input={() =>
+                                            maybeAppendBlankRelationship(
+                                                activeResourceIndex,
+                                                relIndex,
+                                            )}
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <input
