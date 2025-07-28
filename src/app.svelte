@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import { flip } from "svelte/animate";
     import { dndzone } from "svelte-dnd-action";
 
@@ -99,16 +99,20 @@
         }
     }
 
-    function addAttribute(resourceIndex) {
+    async function addAttribute(resourceIndex) {
+        const newId = Date.now();
         resources[resourceIndex].attributes = [
             ...resources[resourceIndex].attributes,
             {
-                id: Date.now(),
+                id: newId,
                 name: "",
                 type: "string",
                 modifiers: [],
             },
         ];
+        await tick();
+        const input = document.getElementById(`attr-name-${newId}`);
+        if (input) input.focus();
     }
 
     function removeAttribute(resourceIndex, attrIndex) {
@@ -117,17 +121,21 @@
         ].attributes.filter((_, i) => i !== attrIndex);
     }
 
-    function addRelationship(resourceIndex) {
+    async function addRelationship(resourceIndex) {
+        const newId = Date.now();
         resources[resourceIndex].relationships = [
             ...resources[resourceIndex].relationships,
             {
-                id: Date.now(),
+                id: newId,
                 type: "belongs_to",
                 name: "",
                 destination: "",
                 modifiers: [],
             },
         ];
+        await tick();
+        const input = document.getElementById(`rel-name-${newId}`);
+        if (input) input.focus();
     }
 
     function removeRelationship(resourceIndex, relIndex) {
@@ -425,6 +433,7 @@
                                         >⋮⋮</span
                                     >
                                     <input
+                                        id="attr-name-{attr.id}"
                                         type="text"
                                         bind:value={attr.name}
                                         placeholder="Name"
@@ -515,6 +524,7 @@
                                         {/each}
                                     </select>
                                     <input
+                                        id="rel-name-{rel.id}"
                                         type="text"
                                         bind:value={rel.name}
                                         placeholder="Name"
