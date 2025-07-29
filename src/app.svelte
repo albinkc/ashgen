@@ -21,6 +21,7 @@
         "public",
         "sensitive",
         "primary_key",
+        // "array",
     ];
     const relationshipTypes = [
         "belongs_to",
@@ -90,8 +91,8 @@
                 id: Date.now(),
                 name: "",
                 domain: "",
-                attributes: [blankAttribute()],
-                relationships: [blankRelationship()],
+                attributes: [blankAttribute()], // ← one blank row
+                relationships: [blankRelationship()], // ← one blank row
                 defaultActions: ["create", "read", "update", "destroy"], // All checked by default
                 idType: "uuid-v7",
                 idFieldName: "id",
@@ -421,6 +422,7 @@
                                 >
                                 <select
                                     bind:value={resource.idType}
+                                    on:change={forceUpdate}
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     {#each idTypes as type}
