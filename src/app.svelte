@@ -69,14 +69,14 @@
 
     /** helpers */
     const blankAttribute = () => ({
-        id: Date.now(),
+        id: Date.now() + Math.random(), // Add randomness to ensure unique IDs
         name: "",
         type: "string",
         modifiers: [],
     });
 
     const blankRelationship = () => ({
-        id: Date.now(),
+        id: Date.now() + Math.random(), // Add randomness to ensure unique IDs
         type: "belongs_to",
         name: "",
         destination: "",
@@ -90,12 +90,12 @@
                 id: Date.now(),
                 name: "",
                 domain: "",
-                attributes: [blankAttribute()], // ← one blank row
-                relationships: [blankRelationship()], // ← one blank row
-                defaultActions: [],
+                attributes: [blankAttribute()],
+                relationships: [blankRelationship()],
+                defaultActions: ["create", "read", "update", "destroy"], // All checked by default
                 idType: "uuid-v7",
                 idFieldName: "id",
-                extensions: [],
+                extensions: ["postgres"], // Postgres checked by default
                 customExtension: "",
                 base: "",
                 timestamps: true,
@@ -122,6 +122,7 @@
             list[attrIndex].name.trim() !== ""
         ) {
             resources[resourceIndex].attributes = [...list, blankAttribute()];
+            resources = resources; // Force reactivity
         }
     }
 
@@ -132,6 +133,7 @@
                 ...list,
                 blankRelationship(),
             ];
+            resources = resources; // Force reactivity
         }
     }
 
@@ -146,6 +148,7 @@
                 modifiers: [],
             },
         ];
+        resources = resources; // Force reactivity
         await tick();
         const input = document.getElementById(`attr-name-${newId}`);
         if (input) input.focus();
@@ -155,6 +158,7 @@
         resources[resourceIndex].attributes = resources[
             resourceIndex
         ].attributes.filter((_, i) => i !== attrIndex);
+        resources = resources; // Force reactivity
     }
 
     async function addRelationship(resourceIndex) {
@@ -169,6 +173,7 @@
                 modifiers: [],
             },
         ];
+        resources = resources; // Force reactivity
         await tick();
         const input = document.getElementById(`rel-name-${newId}`);
         if (input) input.focus();
@@ -178,22 +183,32 @@
         resources[resourceIndex].relationships = resources[
             resourceIndex
         ].relationships.filter((_, i) => i !== relIndex);
+        resources = resources; // Force reactivity
     }
 
     function handleAttributeDndConsider(resourceIndex, e) {
         resources[resourceIndex].attributes = e.detail.items;
+        resources = resources; // Force reactivity
     }
 
     function handleAttributeDndFinalize(resourceIndex, e) {
         resources[resourceIndex].attributes = e.detail.items;
+        resources = resources; // Force reactivity
     }
 
     function handleRelationshipDndConsider(resourceIndex, e) {
         resources[resourceIndex].relationships = e.detail.items;
+        resources = resources; // Force reactivity
     }
 
     function handleRelationshipDndFinalize(resourceIndex, e) {
         resources[resourceIndex].relationships = e.detail.items;
+        resources = resources; // Force reactivity
+    }
+
+    // Helper function to force reactivity on checkbox changes
+    function forceUpdate() {
+        resources = resources;
     }
 
     function generateCommand(resource) {
@@ -482,6 +497,7 @@
                                     />
                                     <select
                                         bind:value={attr.type}
+                                        on:change={forceUpdate}
                                         class="px-2 py-1 border border-gray-300 rounded"
                                     >
                                         {#each attributeTypes as type}
@@ -495,6 +511,7 @@
                                                     type="checkbox"
                                                     bind:group={attr.modifiers}
                                                     value={mod}
+                                                    on:change={forceUpdate}
                                                     class="mr-1"
                                                 />
                                                 <span class="text-sm"
@@ -558,6 +575,7 @@
                                     >
                                     <select
                                         bind:value={rel.type}
+                                        on:change={forceUpdate}
                                         class="px-2 py-1 border border-gray-300 rounded"
                                     >
                                         {#each relationshipTypes as type}
@@ -580,6 +598,7 @@
                                         type="text"
                                         bind:value={rel.destination}
                                         placeholder="Destination (e.g., MyApp.Accounts.User)"
+                                        on:input={forceUpdate}
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <div class="flex space-x-2">
@@ -594,6 +613,7 @@
                                                             rel.modifiers
                                                         }
                                                         value={mod}
+                                                        on:change={forceUpdate}
                                                         class="mr-1"
                                                     />
                                                     <span class="text-sm"
@@ -637,6 +657,7 @@
                                                     resource.defaultActions
                                                 }
                                                 value={action}
+                                                on:change={forceUpdate}
                                                 class="mr-2"
                                             />
                                             {action}
@@ -658,6 +679,7 @@
                                                 type="checkbox"
                                                 bind:group={resource.extensions}
                                                 value={ext}
+                                                on:change={forceUpdate}
                                                 class="mr-2"
                                             />
                                             {ext}
@@ -692,6 +714,7 @@
                                     <input
                                         type="checkbox"
                                         bind:checked={resource.timestamps}
+                                        on:change={forceUpdate}
                                         class="mr-2"
                                     />
                                     Timestamps
@@ -700,6 +723,7 @@
                                     <input
                                         type="checkbox"
                                         bind:checked={resource.ignoreIfExists}
+                                        on:change={forceUpdate}
                                         class="mr-2"
                                     />
                                     Ignore if exists
@@ -714,6 +738,7 @@
                                 >
                                 <select
                                     bind:value={resource.conflictHandling}
+                                    on:change={forceUpdate}
                                     class="px-3 py-2 border border-gray-300 rounded-md"
                                 >
                                     <option value="ignore">ignore</option>
