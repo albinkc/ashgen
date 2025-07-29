@@ -37,7 +37,17 @@
     ];
     const defaultActionTypes = ["create", "read", "update", "destroy"];
     const idTypes = ["uuid-v7", "uuid", "integer", "none"];
-    const builtinExtensions = ["postgres", "graphql", "json_api"];
+    const builtinExtensions = [
+        "Ash.Policy.Authorizer",
+        "json_api",
+        "graphql",
+        "postgres",
+        "sqlite",
+        "mysql",
+        "ets",
+        "mnesia",
+        "embedded",
+    ];
 
     let resources = [];
     let activeResourceIndex = 0;
