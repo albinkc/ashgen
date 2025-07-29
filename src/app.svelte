@@ -29,12 +29,7 @@
         "has_many",
         "many_to_many",
     ];
-    const relationshipModifiers = [
-        "public",
-        "required",
-        "sensitive",
-        "primary_key",
-    ];
+    const relationshipModifiers = ["required", "sensitive", "primary_key"];
     const defaultActionTypes = ["create", "read", "update", "destroy"];
     const idTypes = ["uuid-v7", "uuid", "integer", "none"];
     const builtinExtensions = [
