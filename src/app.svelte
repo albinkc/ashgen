@@ -394,10 +394,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label
+                                    for="resource-name"
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >Resource Name</label
                                 >
                                 <input
+                                    id="resource-name"
                                     type="text"
                                     bind:value={resource.name}
                                     placeholder="e.g., MyApp.Blog.Post"
@@ -406,10 +408,12 @@
                             </div>
                             <div>
                                 <label
+                                    for="resource-domain"
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >Domain</label
                                 >
                                 <input
+                                    id="resource-domain"
                                     type="text"
                                     bind:value={resource.domain}
                                     placeholder="e.g., MyApp.Blog"
@@ -427,10 +431,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label
+                                    for="id-type"
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >ID Type</label
                                 >
                                 <select
+                                    id="id-type"
                                     bind:value={resource.idType}
                                     on:change={forceUpdate}
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -443,10 +449,12 @@
                             {#if resource.idType !== "none"}
                                 <div>
                                     <label
+                                        for="id-field-name"
                                         class="block text-sm font-medium text-gray-700 mb-1"
                                         >ID Field Name</label
                                     >
                                     <input
+                                        id="id-field-name"
                                         type="text"
                                         bind:value={resource.idFieldName}
                                         placeholder="e.g., id"
@@ -656,9 +664,9 @@
                         <div class="space-y-4">
                             <!-- Default Actions -->
                             <div>
-                                <label
+                                <span
                                     class="block text-sm font-medium text-gray-700 mb-1"
-                                    >Default Actions</label
+                                    >Default Actions</span
                                 >
                                 <div class="flex space-x-4">
                                     {#each defaultActionTypes as action}
@@ -680,9 +688,9 @@
 
                             <!-- Extensions -->
                             <div>
-                                <label
+                                <span
                                     class="block text-sm font-medium text-gray-700 mb-1"
-                                    >Extensions</label
+                                    >Extensions</span
                                 >
                                 <div class="flex space-x-4 mb-2">
                                     {#each builtinExtensions as ext}
@@ -699,6 +707,7 @@
                                     {/each}
                                 </div>
                                 <input
+                                    id="custom-extension"
                                     type="text"
                                     bind:value={resource.customExtension}
                                     placeholder="Custom extension (e.g., Some.Extension)"
@@ -709,10 +718,12 @@
                             <!-- Base Module -->
                             <div>
                                 <label
+                                    for="base-module"
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >Base Module</label
                                 >
                                 <input
+                                    id="base-module"
                                     type="text"
                                     bind:value={resource.base}
                                     placeholder="e.g., Ash.Resource"
@@ -745,10 +756,12 @@
                             <!-- Conflict Handling -->
                             <div>
                                 <label
+                                    for="conflict-handling"
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >Conflict Handling</label
                                 >
                                 <select
+                                    id="conflict-handling"
                                     bind:value={resource.conflictHandling}
                                     on:change={forceUpdate}
                                     class="px-3 py-2 border border-gray-300 rounded-md"
