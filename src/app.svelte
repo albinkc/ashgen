@@ -7,6 +7,7 @@
     const attributeTypes = [
         "string",
         "integer",
+        "decimal",
         "float",
         "boolean",
         "date",
@@ -337,7 +338,10 @@
                 Ash Resource Generator
             </h1>
             <p class="text-gray-600">
-                Generate mix ash.gen.resource commands with an intuitive UI
+                Generate <a
+                    href="https://hexdocs.pm/ash/Mix.Tasks.Ash.Gen.Resource.html"
+                    >mix ash.gen.resource</a
+                > commands
             </p>
         </div>
 
