@@ -94,11 +94,12 @@
         modifiers: [],
     });
 
-    function addNewResource() {
+    async function addNewResource() {
+        const newId = Date.now();
         resources = [
             ...resources,
             {
-                id: Date.now(),
+                id: newId,
                 name: "",
                 domain: "",
                 attributes: [blankAttribute()], // ← one blank row
@@ -115,6 +116,11 @@
             },
         ];
         activeResourceIndex = resources.length - 1;
+
+        // Focus the Resource Name field of the newly created resource
+        await tick();
+        const input = document.getElementById(`resource-name-${newId}`);
+        if (input) input.focus();
     }
 
     function deleteResource(index) {
@@ -417,12 +423,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label
-                                    for="resource-name"
+                                    for={"resource-name-" + resource.id}
                                     class="block text-sm font-medium text-gray-700 mb-1"
                                     >Resource Name</label
                                 >
                                 <input
-                                    id="resource-name"
+                                    id={"resource-name-" + resource.id}
                                     type="text"
                                     bind:value={resource.name}
                                     on:input={forceUpdate}
