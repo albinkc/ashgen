@@ -48,6 +48,10 @@
     let resources = [];
     let activeResourceIndex = 0;
 
+    // Re-active view of the active resource, plus an always-fresh command string
+    $: resource = resources[activeResourceIndex] || {};
+    $: command = generateCommand(resource);
+
     // Load from localStorage on mount
     onMount(() => {
         const saved = localStorage.getItem("ash-resource-generator");
@@ -381,9 +385,6 @@
             </div>
 
             {#if resources[activeResourceIndex]}
-                {@const resource = resources[activeResourceIndex]}
-                {@const command = generateCommand(resource)}
-
                 <div class="p-6">
                     <!-- Basic Information -->
                     <div class="mb-6">
@@ -401,6 +402,7 @@
                                     id="resource-name"
                                     type="text"
                                     bind:value={resource.name}
+                                    on:input={forceUpdate}
                                     placeholder="e.g., MyApp.Blog.Post"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -415,6 +417,7 @@
                                     id="resource-domain"
                                     type="text"
                                     bind:value={resource.domain}
+                                    on:input={forceUpdate}
                                     placeholder="e.g., MyApp.Blog"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 />
@@ -456,6 +459,7 @@
                                         id="id-field-name"
                                         type="text"
                                         bind:value={resource.idFieldName}
+                                        on:input={forceUpdate}
                                         placeholder="e.g., id"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
@@ -507,11 +511,13 @@
                                         type="text"
                                         bind:value={attr.name}
                                         placeholder="Name"
-                                        on:input={() =>
+                                        on:input={() => {
+                                            forceUpdate();
                                             maybeAppendBlankAttribute(
                                                 activeResourceIndex,
                                                 attrIndex,
-                                            )}
+                                            );
+                                        }}
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <select
@@ -606,11 +612,13 @@
                                         type="text"
                                         bind:value={rel.name}
                                         placeholder="Name"
-                                        on:input={() =>
+                                        on:input={() => {
+                                            forceUpdate();
                                             maybeAppendBlankRelationship(
                                                 activeResourceIndex,
                                                 relIndex,
-                                            )}
+                                            );
+                                        }}
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <input
@@ -709,6 +717,7 @@
                                     id="custom-extension"
                                     type="text"
                                     bind:value={resource.customExtension}
+                                    on:input={forceUpdate}
                                     placeholder="Custom extension (e.g., Some.Extension)"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md"
                                 />
@@ -725,6 +734,7 @@
                                     id="base-module"
                                     type="text"
                                     bind:value={resource.base}
+                                    on:input={forceUpdate}
                                     placeholder="e.g., Ash.Resource"
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md"
                                 />
