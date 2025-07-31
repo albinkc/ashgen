@@ -312,18 +312,72 @@
         navigator.clipboard.writeText(command);
     }
 
+    // 1. Produce the "first pass" command:
+    function generateBaseCommand(resource) {
+        // clone so we can blank out relationships without mutating state
+        const copy = { ...resource, relationships: [] };
+        return generateCommand(copy);
+    }
+    /* 2. Produce the "second pass" command that ONLY adds relationships
+     *    (and --domain if supplied) */
+    function generateRelationshipCommand(resource) {
+        if (!resource.name) return "";
+        // Build all valid relationship flag segments
+        const relFlags = resource.relationships
+            .filter(
+                (rel) => rel.name && rel.destination, // skip incomplete rows
+            )
+            .map((rel) => {
+                let relDef = `${rel.type}:${rel.name}:${rel.destination}`;
+                if (rel.modifiers.length) {
+                    relDef += `:${rel.modifiers.join(":")}`;
+                }
+                return `--relationship ${relDef}`;
+            });
+        if (relFlags.length === 0) return ""; // Nothing to do
+        // Assemble the command; include --domain when present
+        let cmd = `mix ash.gen.resource ${resource.name} \\\n  ${relFlags.join(
+            " \\\n  ",
+        )}`;
+        if (resource.domain) {
+            cmd += ` \\\n  --domain ${resource.domain}`;
+        }
+        return cmd;
+    }
     function downloadScript() {
-        const script = resources
-            .map((resource) => {
-                const cmd = generateCommand(resource);
-                return cmd ? `# Generate ${resource.name}\n${cmd}\n` : "";
+        /* ---------------- First pass: NO relationships ---------------- */
+        const firstPass = resources
+            .map((r) => {
+                const cmd = generateBaseCommand(r);
+                return cmd ? `# Generate ${r.name}\n${cmd}\n` : "";
             })
-            .filter((cmd) => cmd)
-            .join("\n");
-
-        const blob = new Blob([`#!/bin/bash\n\n${script}`], {
-            type: "text/plain",
-        });
+            .filter(Boolean);
+        /* ---------------- Second pass: ONLY relationships -------------- */
+        const secondPass = resources
+            .map((r) => {
+                const cmd = generateRelationshipCommand(r);
+                return cmd
+                    ? `# Patch ${r.name} – add relationships\n${cmd}\n`
+                    : "";
+            })
+            .filter(Boolean);
+        /* Combine script parts */
+        const script = [
+            "#!/bin/bash",
+            "",
+            "# --------------------------------------------",
+            "# Pass 1: create resources (no relationships)",
+            "# --------------------------------------------",
+            ...firstPass,
+            "",
+            "# --------------------------------------------",
+            "# Pass 2: add relationships",
+            "# --------------------------------------------",
+            ...secondPass,
+            "",
+        ].join("\n");
+        /* Trigger the download */
+        const blob = new Blob([script], { type: "text/plain" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
