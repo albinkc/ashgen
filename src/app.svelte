@@ -411,7 +411,9 @@
                     <p class="text-gray-600">
                         Generate <a
                             href="https://hexdocs.pm/ash/Mix.Tasks.Ash.Gen.Resource.html"
-                            >mix ash.gen.resource</a
+                            class="text-blue-600 hover:text-blue-800 underline font-medium"
+                            target="_blank"
+                            rel="noopener noreferrer">mix ash.gen.resource</a
                         > commands
                     </p>
                 </div>
@@ -769,7 +771,9 @@
                                         type="button"
                                         class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                                         on:click={() => {
-                                            resource.defaultActions = [...defaultActionTypes];
+                                            resource.defaultActions = [
+                                                ...defaultActionTypes,
+                                            ];
                                             forceUpdate();
                                         }}
                                     >
@@ -938,7 +942,7 @@
     <!-- Datalist for resource name autocomplete -->
     <datalist id="resource-names">
         {#each resourceNames as name}
-            <option value={name} />
+            <option value={name}></option>{name} />
         {/each}
     </datalist>
 </div>
