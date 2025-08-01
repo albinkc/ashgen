@@ -52,6 +52,11 @@
     $: resource = resources[activeResourceIndex] || {};
     $: command = generateCommand(resource);
 
+    // Get all resource names for autocomplete
+    $: resourceNames = resources
+        .map((r) => r.name)
+        .filter((name) => name && name.trim() !== "");
+
     // Load from localStorage on mount
     onMount(() => {
         const saved = localStorage.getItem("ash-resource-generator");
@@ -709,6 +714,7 @@
                                         bind:value={rel.destination}
                                         placeholder="Destination (e.g., MyApp.Accounts.User)"
                                         on:input={forceUpdate}
+                                        list="resource-names"
                                         class="flex-1 px-2 py-1 border border-gray-300 rounded"
                                     />
                                     <div class="flex space-x-2">
@@ -754,10 +760,32 @@
                         <div class="space-y-4">
                             <!-- Default Actions -->
                             <div>
-                                <span
-                                    class="block text-sm font-medium text-gray-700 mb-1"
-                                    >Default Actions</span
-                                >
+                                <div class="flex items-center space-x-3 mb-1">
+                                    <span
+                                        class="text-sm font-medium text-gray-700"
+                                        >Default Actions</span
+                                    >
+                                    <button
+                                        type="button"
+                                        class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                        on:click={() => {
+                                            resource.defaultActions = [...defaultActionTypes];
+                                            forceUpdate();
+                                        }}
+                                    >
+                                        Select All
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="px-2 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                                        on:click={() => {
+                                            resource.defaultActions = [];
+                                            forceUpdate();
+                                        }}
+                                    >
+                                        Select None
+                                    </button>
+                                </div>
                                 <div class="flex space-x-4">
                                     {#each defaultActionTypes as action}
                                         <label class="flex items-center">
@@ -906,6 +934,13 @@
             </button>
         </div>
     </div>
+
+    <!-- Datalist for resource name autocomplete -->
+    <datalist id="resource-names">
+        {#each resourceNames as name}
+            <option value={name} />
+        {/each}
+    </datalist>
 </div>
 
 <style>
