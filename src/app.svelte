@@ -118,6 +118,7 @@
                 timestamps: true,
                 ignoreIfExists: false,
                 conflictHandling: "ignore",
+                includeYesFlag: true,
             },
         ];
         activeResourceIndex = resources.length - 1;
@@ -310,6 +311,11 @@
             cmd += ` \\\n  --conflicts ${resource.conflictHandling}`;
         }
 
+        // Add --yes flag
+        if (resource.includeYesFlag) {
+            cmd += ` \\\n  --yes`;
+        }
+
         return cmd;
     }
 
@@ -346,6 +352,10 @@
         )}`;
         if (resource.domain) {
             cmd += ` \\\n  --domain ${resource.domain}`;
+        }
+        // Add --yes flag for relationship commands
+        if (resource.includeYesFlag) {
+            cmd += ` \\\n  --yes`;
         }
         return cmd;
     }
@@ -874,6 +884,15 @@
                                         class="mr-2"
                                     />
                                     Ignore if exists
+                                </label>
+                                <label class="flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        bind:checked={resource.includeYesFlag}
+                                        on:change={forceUpdate}
+                                        class="mr-2"
+                                    />
+                                    Include --yes flag
                                 </label>
                             </div>
 
